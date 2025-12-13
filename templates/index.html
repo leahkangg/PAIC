@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            max-width: 800px;
+        }
+        h2 {
+            margin-bottom: 5px;
+        }
+        #status {
+            margin-top: 10px;
+            color: green;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+        }
+        button {
+            padding: 8px 14px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        #chatBox {
+            white-space: pre-wrap;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Financial Chatbot</h2>
+<p>
+1️⃣ Upload a bank statement PDF  
+<br>
+2️⃣ Chat normally or type <strong>GOAL: your financial goal</strong>
+</p>
+
+<hr>
+
+<h3>Upload PDF</h3>
+<input type="file" id="pdfFile" accept=".pdf">
+<br>
+<button onclick="uploadPDF()">Upload PDF</button>
+<div id="status"></div>
+
+<hr>
+
+<h3>Chat</h3>
+<textarea id="userInput" placeholder="Ask a question or type GOAL: ..."></textarea>
+<br>
+<button onclick="sendMessage()">Send</button>
+
+<div id="chatBox"></div>
+
+<script>
+async function uploadPDF() {
+    const fileInput = document.getElementById("pdfFile");
+    const status = document.getElementById("status");
+
+    if (!fileInput.files.length) {
+        status.style.color = "red";
+        status.textContent = "Please select a PDF file first.";
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    status.style.color = "black";
+    status.textContent = "Uploading...";
+
+    const response = await fetch("/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        status.style.color = "red";
+        status.textContent = data.error;
+    } else {
+        status.style.color = "green";
+        status.textContent = data.message;
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    input.value = "";
+    chatBox.textContent += "\nYou: " + message + "\n";
+
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    chatBox.textContent += "Assistant: " + data.response + "\n";
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+
+</body>
+</html>
