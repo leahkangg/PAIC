@@ -1,13 +1,14 @@
 
 from openai import OpenAI
 import pdfplumber
+import os
+from dotenv import load_dotenv
 
 # a financial chatbot where you can upload a pdf, set a goal saying GOAL: xyz, or just asking a ?
 
-
+load_dotenv()
 client = OpenAI(
-    api_key = "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")
-
+    api_key = os.getenv("openAI_API_KEY"))
 
 # PDF EXTRACTOR 
 def extract_text(path):
