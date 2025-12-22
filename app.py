@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from openai import OpenAI
 import pdfplumber
+from dotenv import load_dotenv
 import os
 
 # test message 
@@ -12,11 +13,13 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+load_dotenv()
 
 # -------------------------
 # OpenAI client
 # -------------------------
-client = OpenAI(api_key="YOURAPIKEY")
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # -------------------------
 # AI System Prompt
