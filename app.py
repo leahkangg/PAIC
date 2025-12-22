@@ -4,7 +4,10 @@ import pdfplumber
 from dotenv import load_dotenv
 import os
 
-# test message 
+# THINGS TO REMEMBER
+# configure .env var with api key remember variable name
+# owner (Leah) create web service
+# API key works verified
 
 # -------------------------
 # Flask setup
