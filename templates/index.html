@@ -1,65 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Financial Assistant</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg: #f5f1eb;
+            --card: #ffffff;
+            --accent: #d6c6b8;
+            --user: #e9dccf;
+            --assistant: #ffffff;
+            --text: #2f2f2f;
+            --border: #e2d9cf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            max-width: 800px;
+            margin: 0;
+            height: 100vh;
+            background: var(--bg);
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        h2 {
-            margin-bottom: 5px;
-        }
-        #status {
-            margin-top: 10px;
-            color: green;
-        }
-        textarea {
+
+        .app {
             width: 100%;
-            height: 80px;
+            max-width: 420px;
+            height: 90vh;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
+
+        /* Header */
+        .header {
+            padding: 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            background: var(--card);
+        }
+
+        .header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* Welcome Screen */
+        .welcome {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .welcome h3 {
+            margin: 0 0 10px;
+            font-weight: 600;
+        }
+
+        .welcome p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Chat Area */
+        #chatBox {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--bg);
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: var(--user);
+            border-bottom-right-radius: 4px;
+        }
+
+        .assistant {
+            align-self: flex-start;
+            background: var(--assistant);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            background: var(--card);
+        }
+
+        textarea {
+            flex: 1;
+            resize: none;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            height: 42px;
+        }
+
         button {
-            padding: 8px 14px;
-            margin-top: 8px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            padding: 0 16px;
+            font-weight: 500;
             cursor: pointer;
         }
-        #chatBox {
-            white-space: pre-wrap;
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
+
+        button:hover {
+            opacity: 0.9;
         }
+
+        /* Upload Section */
+        .upload {
+            padding: 14px;
+            border-top: 1px solid var(--border);
+            background: #faf7f3;
+        }
+
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload input[type="file"] {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .upload-btn {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .upload-btn:hover {
+            opacity: 0.9;
+        }
+
+        #status {
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
     </style>
 </head>
 <body>
 
-<h2>Financial Chatbot</h2>
-<p>Test Message</p>
-<p>
-1️⃣ Upload a bank statement PDF  
-<br>
-2️⃣ Chat normally or type <strong>GOAL: your financial goal</strong>
-</p>
+<div class="app">
 
-<hr>
+    <div class="header">
+        <h2>Financial Assistant</h2>
+    </div>
 
-<h3>Upload PDF</h3>
-<input type="file" id="pdfFile" accept=".pdf">
-<br>
-<button onclick="uploadPDF()">Upload PDF</button>
-<div id="status"></div>
+    <div class="welcome">
+        <h3>Welcome 👋</h3>
+        <p>How can we help you today?</p>
+        <p style="margin-top:8px;font-size:13px;">
+            Upload a bank statement for comprehensive financial advice or chat about general financial advice.<br>
+        </p>
+    </div>
 
-<hr>
+    <div id="chatBox"></div>
 
-<h3>Chat</h3>
-<textarea id="userInput" placeholder="Ask a question or type GOAL: ..."></textarea>
-<br>
-<button onclick="sendMessage()">Send</button>
+    <div class="input-area">
+        <textarea id="userInput" placeholder="Type a message..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+    </div>
 
-<div id="chatBox"></div>
+    <div class="upload">
+        <div class="upload-row">
+        <input type="file" id="pdfFile" accept=".pdf">
+        <button class="upload-btn" onclick="uploadPDF()">Upload</button>
+    </div>
+    <div id="status"></div>
+</div>
+
+
+</div>
 
 <script>
 async function uploadPDF() {
@@ -68,7 +223,7 @@ async function uploadPDF() {
 
     if (!fileInput.files.length) {
         status.style.color = "red";
-        status.textContent = "Please select a PDF file first.";
+        status.textContent = "Please select a PDF file.";
         return;
     }
 
@@ -84,25 +239,24 @@ async function uploadPDF() {
     });
 
     const data = await response.json();
-
-    if (data.error) {
-        status.style.color = "red";
-        status.textContent = data.error;
-    } else {
-        status.style.color = "green";
-        status.textContent = data.message;
-    }
+    status.style.color = data.error ? "red" : "green";
+    status.textContent = data.error || data.message;
 }
 
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
     const message = input.value.trim();
-
     if (!message) return;
 
     input.value = "";
-    chatBox.textContent += "\nYou: " + message + "\n";
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = message;
+    chatBox.appendChild(userMsg);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
 
     const response = await fetch("/chat", {
         method: "POST",
@@ -111,7 +265,12 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-    chatBox.textContent += "Assistant: " + data.response + "\n";
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "message assistant";
+    botMsg.textContent = data.response;
+    chatBox.appendChild(botMsg);
+
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 </script>
