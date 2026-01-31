@@ -18,9 +18,7 @@
             --border: #e2d9cf;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -45,12 +43,10 @@
             overflow: hidden;
         }
 
-        /* Header */
         .header {
             padding: 18px;
             border-bottom: 1px solid var(--border);
             text-align: center;
-            background: var(--card);
         }
 
         .header h2 {
@@ -58,7 +54,6 @@
             font-weight: 600;
         }
 
-        /* Welcome Screen */
         .welcome {
             padding: 30px 20px;
             text-align: center;
@@ -76,7 +71,6 @@
             color: #555;
         }
 
-        /* Chat Area */
         #chatBox {
             flex: 1;
             padding: 15px;
@@ -109,7 +103,21 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Input Area */
+        #thinking {
+            display: none;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-style: italic;
+            color: #666;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
         .input-area {
             padding: 12px;
             border-top: 1px solid var(--border);
@@ -138,11 +146,8 @@
             cursor: pointer;
         }
 
-        button:hover {
-            opacity: 0.9;
-        }
+        button:hover { opacity: 0.9; }
 
-        /* Upload Section */
         .upload {
             padding: 14px;
             border-top: 1px solid var(--border);
@@ -165,25 +170,18 @@
             font-size: 14px;
             font-weight: 500;
             background: var(--accent);
-            border: none;
             border-radius: 12px;
             cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .upload-btn:hover {
-            opacity: 0.9;
         }
 
         #status {
             margin-top: 6px;
             font-size: 13px;
         }
-
     </style>
 </head>
-<body>
 
+<body>
 <div class="app">
 
     <div class="header">
@@ -194,11 +192,12 @@
         <h3>Welcome 👋</h3>
         <p>How can we help you today?</p>
         <p style="margin-top:8px;font-size:13px;">
-            Upload a bank statement for comprehensive financial advice or chat about general financial advice.<br>
+            Upload a bank statement for comprehensive financial advice or chat about general financial advice.
         </p>
     </div>
 
     <div id="chatBox"></div>
+    <div id="thinking">chatbot is thinking...</div>
 
     <div class="input-area">
         <textarea id="userInput" placeholder="Type a message..."></textarea>
@@ -207,12 +206,11 @@
 
     <div class="upload">
         <div class="upload-row">
-        <input type="file" id="pdfFile" accept=".pdf">
-        <button class="upload-btn" onclick="uploadPDF()">Upload</button>
+            <input type="file" id="pdfFile" accept=".pdf">
+            <button class="upload-btn" onclick="uploadPDF()">Upload</button>
+        </div>
+        <div id="status"></div>
     </div>
-    <div id="status"></div>
-</div>
-
 
 </div>
 
@@ -246,6 +244,8 @@ async function uploadPDF() {
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
+    const thinking = document.getElementById("thinking");
+
     const message = input.value.trim();
     if (!message) return;
 
@@ -258,20 +258,30 @@ async function sendMessage() {
 
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    const response = await fetch("/chat", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ message })
-    });
+    thinking.style.display = "block";
 
-    const data = await response.json();
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ message })
+        });
 
-    const botMsg = document.createElement("div");
-    botMsg.className = "message assistant";
-    botMsg.textContent = data.response;
-    chatBox.appendChild(botMsg);
+        const data = await response.json();
 
-    chatBox.scrollTop = chatBox.scrollHeight;
+        thinking.style.display = "none";
+
+        const botMsg = document.createElement("div");
+        botMsg.className = "message assistant";
+        botMsg.textContent = data.response;
+        chatBox.appendChild(botMsg);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch (error) {
+        thinking.style.display = "none";
+        alert("Error contacting the chatbot.");
+    }
 }
 </script>
 
