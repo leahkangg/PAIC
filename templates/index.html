@@ -12,6 +12,7 @@
             --bg: #f5f1eb;
             --card: #ffffff;
             --accent: #d6c6b8;
+            --sidebar: #f0e8df;
             --user: #e9dccf;
             --assistant: #ffffff;
             --text: #2f2f2f;
@@ -27,12 +28,60 @@
             font-family: "Inter", sans-serif;
             color: var(--text);
             display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        .app {
+        /* ───────── SIDEBAR ───────── */
+        .sidebar {
+            width: 240px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin: 0 0 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar button {
             width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: var(--accent);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .sidebar button:hover {
+            opacity: 0.9;
+        }
+
+        .sidebar-section {
+            margin-top: 25px;
+        }
+
+        .sidebar-section h4 {
+            margin: 0 0 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .sidebar-section p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #666;
+        }
+
+        /* ───────── MAIN APP ───────── */
+        .app {
+            flex: 1;
             max-width: 420px;
             height: 90vh;
             background: var(--card);
@@ -41,6 +90,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin: auto;
         }
 
         .header {
@@ -146,8 +196,6 @@
             cursor: pointer;
         }
 
-        button:hover { opacity: 0.9; }
-
         .upload {
             padding: 14px;
             border-top: 1px solid var(--border);
@@ -156,22 +204,7 @@
 
         .upload-row {
             display: flex;
-            align-items: center;
             gap: 10px;
-        }
-
-        .upload input[type="file"] {
-            flex: 1;
-            font-size: 13px;
-        }
-
-        .upload-btn {
-            padding: 10px 18px;
-            font-size: 14px;
-            font-weight: 500;
-            background: var(--accent);
-            border-radius: 12px;
-            cursor: pointer;
         }
 
         #status {
@@ -182,6 +215,33 @@
 </head>
 
 <body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>💰 FinAssist</h2>
+
+    <button onclick="location.reload()">➕ New Chat</button>
+    <button onclick="document.getElementById('pdfFile').click()">📄 Upload Statement</button>
+
+    <div class="sidebar-section">
+        <h4>What I can help with</h4>
+        <p>
+            • Budgeting & saving<br>
+            • Spending analysis<br>
+            • Credit & debt tips<br>
+            • Bank statement insights
+        </p>
+    </div>
+
+    <div class="sidebar-section">
+        <h4>Privacy</h4>
+        <p>
+            Your files are processed securely and not stored permanently.
+        </p>
+    </div>
+</div>
+
+<!-- MAIN APP -->
 <div class="app">
 
     <div class="header">
@@ -190,10 +250,7 @@
 
     <div class="welcome">
         <h3>Welcome 👋</h3>
-        <p>How can we help you today?</p>
-        <p style="margin-top:8px;font-size:13px;">
-            Upload a bank statement for comprehensive financial advice or chat about general financial advice.
-        </p>
+        <p>Ask questions or upload a bank statement for insights.</p>
     </div>
 
     <div id="chatBox"></div>
@@ -207,7 +264,7 @@
     <div class="upload">
         <div class="upload-row">
             <input type="file" id="pdfFile" accept=".pdf">
-            <button class="upload-btn" onclick="uploadPDF()">Upload</button>
+            <button onclick="uploadPDF()">Upload</button>
         </div>
         <div id="status"></div>
     </div>
@@ -228,7 +285,6 @@ async function uploadPDF() {
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
 
-    status.style.color = "black";
     status.textContent = "Uploading...";
 
     const response = await fetch("/upload", {
@@ -257,7 +313,6 @@ async function sendMessage() {
     chatBox.appendChild(userMsg);
 
     chatBox.scrollTop = chatBox.scrollHeight;
-
     thinking.style.display = "block";
 
     try {
@@ -268,7 +323,6 @@ async function sendMessage() {
         });
 
         const data = await response.json();
-
         thinking.style.display = "none";
 
         const botMsg = document.createElement("div");
@@ -278,7 +332,7 @@ async function sendMessage() {
 
         chatBox.scrollTop = chatBox.scrollHeight;
 
-    } catch (error) {
+    } catch {
         thinking.style.display = "none";
         alert("Error contacting the chatbot.");
     }
